@@ -21,20 +21,30 @@ def init():
                         AUTHOR TEXT NOT NULL,
                         YEAR INTEGER NOT NULL,
                         GENERE TEXT,
-                        copies_available INTEGRER NOT NULL,
+                        available_copies INTEGRER NOT NULL,
+                        totalcopies Integer NOT NULL,
                         READ_STATUS BOOLEAN DEFAULT 0)''')
 
     # Borrowed Books Table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS BORROWEDBOOKS (
+    cursor.execute('''CREATE TABLE IF NOT EXISTS BorrowedBooks (
                         borrow_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        MEM_ID INTEGER,
+                        mem_id INTEGER,
                         book_id INTEGER,
                         borrow_date DATE DEFAULT CURRENT_DATE,
+                        due_date DATE,
                         return_date DATE NULL,
-                        fine INTEGER DEFAULT 0,
+                        status TEXT DEFAULT 'Borrowed',
+                        FOREIGN KEY (mem_id) REFERENCES Members(mem_id),
+                        FOREIGN KEY (book_id) REFERENCES Books(book_id)
+                        )''')
+                    
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Fines (
+                        fine_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        borrow_id INTEGER,
+                        fine_amount INTEGER DEFAULT 0,
                         fine_paid BOOLEAN DEFAULT 0,
-                        FOREIGN KEY (MEM_ID) REFERENCES Members(MEM_ID),
-                        FOREIGN KEY (book_id) REFERENCES Books(book_id))''')
+                        FOREIGN KEY (borrow_id) REFERENCES BorrowedBooks(borrow_id)
+                        )''')
 
     conn.commit()
     conn.close()

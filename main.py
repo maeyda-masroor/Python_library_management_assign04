@@ -5,7 +5,7 @@ import Member as mem
 import Books as book
 import matplotlib.pyplot as plt
 import BorrowedBook as bb
-
+import Fine as f
 db_init = db.init()
 st.title("Library Management System")
 
@@ -75,7 +75,7 @@ if st.session_state.authenticated:
     st.sidebar.subheader(f"{st.session_state.user_role}: {st.session_state.username}")
 
 if st.session_state.user_role == "Librarian":
-    dashboard_choice = st.sidebar.selectbox("Dashboard", ["Add Book", "View Books", "Remove Book", "Statistics", "Search Book","View Borrowed Books", "Logout"])
+    dashboard_choice = st.sidebar.selectbox("Dashboard", ["Add Book", "View Books", "Remove Book", "Statistics", "Search Book","Borrow Book","Return Book","View Borrowed Books","View Fines","Calculate Fine", "Logout"])
 
     if dashboard_choice == "Add Book":
         st.subheader("Add a Book")
@@ -85,9 +85,10 @@ if st.session_state.user_role == "Librarian":
         genre = st.text_input("Genre")
         read_status = st.checkbox("Mark as Read")
         copies_available = st.number_input("copies avaiable")
-
+        total_copies = st.number_input("total copies")
+        
         if st.button("Add Book"):
-            book.add_book(title, author, genre, year, read_status,copies_available)
+            book.add_book(title, author, genre, year, read_status,copies_available,total_copies)
             st.success(f"Book '{title}' added successfully!")
             st.rerun()
 
@@ -98,12 +99,49 @@ if st.session_state.user_role == "Librarian":
             book.remove_book(book_id)
             st.success("Book removed successfully!")
             st.rerun()   
+        
     elif dashboard_choice == "View Books":
-        st.subheader("📚 All Books in Library")
+        st.subheader("All Books in Library")
         books = book.fetch_books()
         st.dataframe(books)
 
-    
+    elif dashboard_choice == "Calculate Fine":
+        st.subheader("🔍 Calculate Fine for Overdue Books")
+        borrow_id = st.text_input("Enter Borrow ID:")
+        if st.button("Calculate Fine"):
+            if borrow_id:
+                f.calculate_fine(int(borrow_id))
+            else:
+                st.warning("Please enter a Borrow ID!")
+
+
+    elif dashboard_choice == "Borrow Book":
+        st.subheader("Borrow a Book")
+        mem_id = st.text_input("Enter Member ID:")
+        book_id = st.text_input("Enter Book ID:")
+
+        if st.button("Borrow Book"):
+            if mem_id and book_id:
+                bb.borrow_book(int(mem_id), int(book_id))
+            else:
+                st.warning("Please enter both Member ID and Book ID!")
+
+    elif dashboard_choice == "Return Book":
+        st.subheader("Return a Book")
+        borrow_id = st.text_input("Enter Borrow ID:")
+        book_id = st.text_input("Enter Book ID:")
+
+        if st.button("Return Book"):
+            if borrow_id and book_id:
+                bb.return_book(int(borrow_id), int(book_id))
+            else:
+                st.warning("Please enter both Borrow ID and Book ID!")
+
+    elif dashboard_choice == "View Fines":
+       st.subheader("All Books in Library")
+       books = f.view_fine()
+       st.dataframe(books)
+
     elif dashboard_choice == "Search Book":
         st.subheader("🔍 Search for a Book")
         query = st.text_input("Enter Title, Author, or Genre")
@@ -129,16 +167,7 @@ if st.session_state.user_role == "Librarian":
 
         st.pyplot(fig)
      
-    elif dashboard_choice == "View Borrowed Books":
-        st.subheader("📖 Borrowed Books & Fines")
-        borrowed_books = bb.fetch_borrowed_books()
-        st.dataframe(borrowed_books)
-
-        borrow_id = st.number_input("Enter Borrow ID to Pay Fine",min_value=1, max_value=9999, step=1 )
-        if st.button("Mark Fine as Paid"):
-            bb.pay_fine(borrow_id)
-            st.success("Fine marked as paid!")
- 
+    
     elif dashboard_choice == "Logout":
         st.session_state.authenticated = False
         st.session_state.user_role = None
@@ -147,7 +176,7 @@ if st.session_state.user_role == "Librarian":
         st.rerun()
 
 elif st.session_state.user_role == "Member":
-        member_dashboard_choice = st.sidebar.selectbox("Member Dashboard", ["View Books", "Search Book", "Logout"])
+        member_dashboard_choice = st.sidebar.selectbox("Member Dashboard", ["View Books", "Search Book", "Logout","Pay fine"])
 
         if member_dashboard_choice == "View Books":
            st.subheader("📚 All Books in Library")
@@ -171,4 +200,14 @@ elif st.session_state.user_role == "Member":
             st.session_state.username = None
             st.success("Logged out successfully!")
             st.rerun()
+        
+        elif member_dashboard_choice == "Pay Fine":
+            st.subheader("Pay Fine")
+            fine_id = st.text_input("Enter Fine ID:")
+            if st.button("Pay Fine"):
+                if fine_id:
+                    f.pay_fine(int(fine_id))
+            else:
+                st.warning("Please enter a Fine ID!")
+
 

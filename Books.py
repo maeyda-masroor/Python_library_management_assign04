@@ -2,11 +2,11 @@ import sqlite3
 import pandas as pd
 
 
-def add_book(title, author, genre, year, read_status,copies_available):
+def add_book(title, author, genre, year, read_status,copies_available,totalcopies):
     conn = sqlite3.connect("lib.db")
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Books (title, author, genere, year, read_status,copies_available) VALUES (?, ?, ?, ?, ?,?)", 
-                   (title, author, genre, year, read_status,copies_available))
+    cursor.execute("INSERT INTO Books (title, author, genere, year, read_status,available_copies,totalcopies) VALUES (?, ?, ?, ?, ?,?,?)", 
+                   (title, author, genre, year, read_status,copies_available,totalcopies))
     conn.commit()
     conn.close()
 

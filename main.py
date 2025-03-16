@@ -84,9 +84,10 @@ if st.session_state.user_role == "Librarian":
         year = st.number_input("Publication Year", min_value=1000, max_value=9999, step=1)
         genre = st.text_input("Genre")
         read_status = st.checkbox("Mark as Read")
+        copies_available = st.number_input("copies avaiable")
 
         if st.button("Add Book"):
-            book.add_book(title, author, genre, year, read_status)
+            book.add_book(title, author, genre, year, read_status,copies_available)
             st.success(f"Book '{title}' added successfully!")
             st.rerun()
 
@@ -133,7 +134,7 @@ if st.session_state.user_role == "Librarian":
         borrowed_books = bb.fetch_borrowed_books()
         st.dataframe(borrowed_books)
 
-        borrow_id = st.number_input("Enter Borrow ID to Pay Fine", min_value=1, step=1)
+        borrow_id = st.number_input("Enter Borrow ID to Pay Fine",min_value=1, max_value=9999, step=1 )
         if st.button("Mark Fine as Paid"):
             bb.pay_fine(borrow_id)
             st.success("Fine marked as paid!")

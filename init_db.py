@@ -21,6 +21,7 @@ def init():
                         AUTHOR TEXT NOT NULL,
                         YEAR INTEGER NOT NULL,
                         GENERE TEXT,
+                        copies_available INTEGRER NOT NULL,
                         READ_STATUS BOOLEAN DEFAULT 0)''')
 
     # Borrowed Books Table

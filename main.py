@@ -157,8 +157,8 @@ if st.session_state.user_role == "Librarian":
         st.subheader("📊 Library Statistics")
         total_books, read_books, percentage_read = book.book_statistics()
 
-        st.write(f"📘 **Total Books:** {total_books}")
-        st.write(f"✅ **Books Read:** {read_books} ({percentage_read:.2f}%)")
+        st.write(f"Total Books:** {total_books}")
+        st.write(f"Books Read:** {read_books} ({percentage_read:.2f}%)")
 
         fig, ax = plt.subplots()
         ax.bar(["Total Books", "Read Books"], [total_books, read_books], color=["blue", "green"])
@@ -179,12 +179,12 @@ elif st.session_state.user_role == "Member":
         member_dashboard_choice = st.sidebar.selectbox("Member Dashboard", ["View Books", "Search Book", "Logout","Pay fine"])
 
         if member_dashboard_choice == "View Books":
-           st.subheader("📚 All Books in Library")
+           st.subheader(" All Books in Library")
            books = book.fetch_books()
            st.dataframe(books)
 
         elif member_dashboard_choice == "Search Book":
-            st.subheader("🔍 Search for a Book")
+            st.subheader("Search for a Book")
             query = st.text_input("Enter Title, Author, or Genre")
         
             if st.button("Search"):
